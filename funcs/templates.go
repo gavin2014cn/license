@@ -16,7 +16,7 @@
 // .templates/mpl-2.0.tmpl
 // .templates/unlicense.tmpl
 // .templates/wtfpl.tmpl
-package main
+package funcs
 
 import (
 	"bytes"
@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"license/cmn"
 	"os"
 	"path/filepath"
 	"strings"
@@ -378,7 +379,7 @@ func TemplatesWtfplTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: ".templates/wtfpl.tmpl", size: 474, mode: os.FileMode(420), modTime: time.Unix(1610884612, 0)}
+	info := bindataFileInfo{name: ".templates/wtfpl.tmpl", size: 474, mode: os.FileMode(0420), modTime: time.Unix(1610884612, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -387,8 +388,7 @@ func TemplatesWtfplTmpl() (*asset, error) {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func Asset(name string) ([]byte, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	if f, ok := _bindata[canonicalName]; ok {
+	if f, ok := _bindata[cmn.CFS(name)]; ok {
 		a, err := f()
 		if err != nil {
 			return nil, fmt.Errorf("Asset %s can't read by error: %v", name, err)
@@ -425,7 +425,7 @@ func MustAssetString(name string) string {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func AssetInfo(name string) (os.FileInfo, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
+	canonicalName := cmn.CFS(name)
 	if f, ok := _bindata[canonicalName]; ok {
 		a, err := f()
 		if err != nil {
@@ -439,7 +439,7 @@ func AssetInfo(name string) (os.FileInfo, error) {
 // AssetDigest returns the digest of the file with the given name. It returns an
 // error if the asset could not be found or the digest could not be loaded.
 func AssetDigest(name string) ([sha256.Size]byte, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
+	canonicalName := cmn.CFS(name)
 	if f, ok := _bindata[canonicalName]; ok {
 		a, err := f()
 		if err != nil {
@@ -507,7 +507,7 @@ var _bindata = map[string]func() (*asset, error){
 func AssetDir(name string) ([]string, error) {
 	node := _bintree
 	if len(name) != 0 {
-		canonicalName := strings.Replace(name, "\\", "/", -1)
+		canonicalName := cmn.CFS(name)
 		pathList := strings.Split(canonicalName, "/")
 		for _, p := range pathList {
 			node = node.Children[p]
@@ -532,22 +532,22 @@ type bintree struct {
 }
 
 var _bintree = &bintree{nil, map[string]*bintree{
-	".templates": &bintree{nil, map[string]*bintree{
-		"agpl-3.0.tmpl":     &bintree{TemplatesAgpl30Tmpl, map[string]*bintree{}},
-		"apache-2.0.tmpl":   &bintree{TemplatesApache20Tmpl, map[string]*bintree{}},
-		"bsd-2-clause.tmpl": &bintree{TemplatesBsd2ClauseTmpl, map[string]*bintree{}},
-		"bsd-3-clause.tmpl": &bintree{TemplatesBsd3ClauseTmpl, map[string]*bintree{}},
-		"cc0-1.0.tmpl":      &bintree{TemplatesCc010Tmpl, map[string]*bintree{}},
-		"epl-2.0.tmpl":      &bintree{TemplatesEpl20Tmpl, map[string]*bintree{}},
-		"free-art-1.3.tmpl": &bintree{TemplatesFreeArt13Tmpl, map[string]*bintree{}},
-		"gpl-2.0.tmpl":      &bintree{TemplatesGpl20Tmpl, map[string]*bintree{}},
-		"gpl-3.0.tmpl":      &bintree{TemplatesGpl30Tmpl, map[string]*bintree{}},
-		"lgpl-2.1.tmpl":     &bintree{TemplatesLgpl21Tmpl, map[string]*bintree{}},
-		"lgpl-3.0.tmpl":     &bintree{TemplatesLgpl30Tmpl, map[string]*bintree{}},
-		"mit.tmpl":          &bintree{TemplatesMitTmpl, map[string]*bintree{}},
-		"mpl-2.0.tmpl":      &bintree{TemplatesMpl20Tmpl, map[string]*bintree{}},
-		"unlicense.tmpl":    &bintree{TemplatesUnlicenseTmpl, map[string]*bintree{}},
-		"wtfpl.tmpl":        &bintree{TemplatesWtfplTmpl, map[string]*bintree{}},
+	".templates": {nil, map[string]*bintree{
+		"agpl-3.0.tmpl":     {TemplatesAgpl30Tmpl, map[string]*bintree{}},
+		"apache-2.0.tmpl":   {TemplatesApache20Tmpl, map[string]*bintree{}},
+		"bsd-2-clause.tmpl": {TemplatesBsd2ClauseTmpl, map[string]*bintree{}},
+		"bsd-3-clause.tmpl": {TemplatesBsd3ClauseTmpl, map[string]*bintree{}},
+		"cc0-1.0.tmpl":      {TemplatesCc010Tmpl, map[string]*bintree{}},
+		"epl-2.0.tmpl":      {TemplatesEpl20Tmpl, map[string]*bintree{}},
+		"free-art-1.3.tmpl": {TemplatesFreeArt13Tmpl, map[string]*bintree{}},
+		"gpl-2.0.tmpl":      {TemplatesGpl20Tmpl, map[string]*bintree{}},
+		"gpl-3.0.tmpl":      {TemplatesGpl30Tmpl, map[string]*bintree{}},
+		"lgpl-2.1.tmpl":     {TemplatesLgpl21Tmpl, map[string]*bintree{}},
+		"lgpl-3.0.tmpl":     {TemplatesLgpl30Tmpl, map[string]*bintree{}},
+		"mit.tmpl":          {TemplatesMitTmpl, map[string]*bintree{}},
+		"mpl-2.0.tmpl":      {TemplatesMpl20Tmpl, map[string]*bintree{}},
+		"unlicense.tmpl":    {TemplatesUnlicenseTmpl, map[string]*bintree{}},
+		"wtfpl.tmpl":        {TemplatesWtfplTmpl, map[string]*bintree{}},
 	}},
 }}
 
@@ -590,6 +590,6 @@ func RestoreAssets(dir, name string) error {
 }
 
 func _filePath(dir, name string) string {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
+	canonicalName := cmn.CFS(name)
 	return filepath.Join(append([]string{dir}, strings.Split(canonicalName, "/")...)...)
 }

@@ -53,8 +53,8 @@ func Get(name string) (string, error) {
 	return execHgConfig(name)
 }
 
-// Username is a convenience function for getting "ui.username".
+// Uname is a convenience function for getting "ui.username".
 // This is the same as calling Get("ui.username").
-func Username() (string, error) {
+func Uname() (string, error) {
 	return Get("ui.username")
 }

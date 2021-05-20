@@ -2,64 +2,26 @@ package main
 
 import (
 	"flag"
-	"log"
+	def "license/define"
+	lic "license/funcs"
 	"os"
-	"os/user"
-	"strconv"
 	"strings"
-	"time"
-
-	"github.com/nishanths/go-hgconfig"
-	"github.com/tcnksm/go-gitconfig"
-)
-
-const (
-	nameEnv       = "LICENSE_FULL_NAME"
-	versionString = "v5"
-
-	usageString = `Usage: license [flags] [license-type]
-
-Flags:
-       -help     print help information
-       -list     print list of available license types
-   -n, -name     full name to use on license (default %q)
-   -o, -output   path to output file (prints to stdout if unspecified)
-       -version  print version
-   -y, -year     year to use on license (default %q)
-
-Examples:
-  license mit
-  license -name "Alice L" -year 2013 bsd-3-clause
-  license -o LICENSE.txt mpl-2.0`
-)
-
-var (
-	stdout = log.New(os.Stdout, "", 0)
-	stderr = log.New(os.Stderr, "", 0)
-)
-
-var (
-	fName    string
-	fYear    string
-	fOutput  string
-	fVersion bool
-	fHelp    bool
-	fList    bool
 )
 
 func main() {
-	flag.StringVar(&fName, "name", "", "name on license")
-	flag.StringVar(&fName, "n", "", "name on license")
-	flag.StringVar(&fYear, "year", "", "year on license")
-	flag.StringVar(&fYear, "y", "", "year on license")
-	flag.StringVar(&fOutput, "output", "", "path to output file")
-	flag.StringVar(&fOutput, "o", "", "path to output file")
-	flag.BoolVar(&fVersion, "version", false, "print version")
-	flag.BoolVar(&fHelp, "help", false, "print help")
-	flag.BoolVar(&fList, "list", false, "print available licenses")
+
+	flag.StringVar(&def.Args.FN, "name", "", "name on license")
+	flag.StringVar(&def.Args.FN, "n", "", "name on license")
+	flag.StringVar(&def.Args.FY, "year", "", "year on license")
+	flag.StringVar(&def.Args.FY, "y", "", "year on license")
+	flag.StringVar(&def.Args.FO, "output", "", "path to output file")
+	flag.StringVar(&def.Args.FO, "o", "", "path to output file")
+	flag.BoolVar(&def.Args.FV, "version", false, "print version")
+	flag.BoolVar(&def.Args.FH, "help", false, "print help")
+	flag.BoolVar(&def.Args.FL, "list", false, "print available licenses")
 
 	flag.Usage = func() {
-		printUsage()
+		lic.Pusage()
 		os.Exit(1)
 	}
 	flag.Parse()
@@ -68,68 +30,26 @@ func main() {
 }
 
 func run() {
-	if flag.NArg() != 1 && !(fVersion || fHelp || fList) {
-		printUsage()
+	if flag.NArg() != 1 && !(def.Args.FV || def.Args.FH || def.Args.FL) {
+		lic.Pusage()
 		os.Exit(1)
 	}
 
 	switch {
-	case fVersion:
-		printVersion()
+	case def.Args.FV:
+		lic.Pver()
 		os.Exit(0)
 
-	case fHelp:
-		printUsage()
+	case def.Args.FH:
+		lic.Pusage()
 		os.Exit(0)
 
-	case fList:
-		printList()
+	case def.Args.FL:
+		lic.Plist()
 		os.Exit(0)
 
 	default:
 		license := strings.ToLower(flag.Arg(0))
-		printLicense(license, fOutput, getName(), getYear()) // internally calls os.Exit() on failure
+		lic.Plic(license) // internally calls os.Exit() on failure
 	}
-}
-
-func printVersion() {
-	stdout.Printf("%s", versionString)
-}
-
-func printUsage() {
-	stderr.Printf(usageString, getName(), getYear())
-}
-
-func getName() string {
-	if fName != "" {
-		return fName
-	}
-	n := os.Getenv(nameEnv)
-	if n != "" {
-		return n
-	}
-	n, err := gitconfig.Username()
-	if err == nil {
-		return n
-	}
-	n, err = gitconfig.Global("user.name")
-	if err == nil {
-		return n
-	}
-	n, err = hgconfig.Username()
-	if err == nil {
-		return n
-	}
-	usr, err := user.Current()
-	if err == nil {
-		return usr.Name
-	}
-	return ""
-}
-
-func getYear() string {
-	if fYear != "" {
-		return fYear
-	}
-	return strconv.Itoa(time.Now().Year())
 }

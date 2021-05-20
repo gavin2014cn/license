@@ -34,8 +34,8 @@ func Entire(key string) (string, error) {
 	return execGitConfig(key)
 }
 
-// Global extracts configuration value from `$HOME/.gitconfig` file or `$GIT_CONFIG`.
-func Global(key string) (string, error) {
+// Goba extracts configuration value from `$HOME/.gitconfig` file or `$GIT_CONFIG`.
+func Goba(key string) (string, error) {
 	return execGitConfig("--global", key)
 }
 
@@ -50,9 +50,9 @@ func GithubUser() (string, error) {
 	return Entire("github.user")
 }
 
-// Username extracts git user name from `Entire gitconfig`.
+// Uname extracts git user name from `Entire gitconfig`.
 // This is same as Entire("user.name")
-func Username() (string, error) {
+func Uname() (string, error) {
 	return Entire("user.name")
 }
 

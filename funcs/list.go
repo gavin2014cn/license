@@ -1,9 +1,14 @@
-package main
+package funcs
+
+import (
+	"license/cmn"
+	"license/define"
+)
 
 var (
 	licensesList = []struct {
-		key      string
-		longName string
+		key  string
+		desc string
 	}{
 		{"agpl-3.0", "GNU Affero General Public License v3.0"},
 		{"apache-2.0", "Apache License 2.0"},
@@ -23,8 +28,16 @@ var (
 	}
 )
 
-func printList() {
+func Plist() {
 	for _, l := range licensesList {
-		stdout.Printf("%-14s(%s)", l.key, l.longName)
+		Stdout.Printf("%-14s(%s)", l.key, l.desc)
 	}
+}
+
+func Pver() {
+	Stdout.Printf("%s", define.VersionString)
+}
+
+func Pusage() {
+	Stderr.Printf(define.UsageString, cmn.GName(), cmn.GYear())
 }
